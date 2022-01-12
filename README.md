@@ -10,4 +10,4 @@ log4shell pwner for vulnerable minecraft servers
 
 install all reqs python + a minecraft client for the autopwn functionality
 
-run the .py file which will download the marshalsec filles and thats pretty much it set up payloads and have fun :)
+run the .py file which will download the marshalsec filles and thats pretty much it set up payloads and have fun :) :)
